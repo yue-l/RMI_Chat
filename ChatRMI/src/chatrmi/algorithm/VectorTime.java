@@ -3,6 +3,10 @@ package chatrmi.algorithm;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * 
+ * @author caroline & yue
+ */
 public class VectorTime {
 
     private Map<String, Integer> timestamps;

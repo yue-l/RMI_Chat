@@ -5,12 +5,10 @@ import chatrmi.interfaces.ClientInterface;
 import chatrmi.interfaces.ServerInterface;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.ArrayList;
 
 /**
- * The client remote object, to identify the client connection
  *
- * @author yue
+ * @author caroline & yue
  */
 public class RemoteClient extends UnicastRemoteObject implements ClientInterface {
 

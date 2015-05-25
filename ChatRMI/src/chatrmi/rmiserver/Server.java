@@ -18,7 +18,7 @@ import java.util.logging.Logger;
 /**
  *
  *
- * @author yue
+ * @author caroline & yue
  */
 public class Server extends UnicastRemoteObject implements ServerInterface {
 

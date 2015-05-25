@@ -2,6 +2,10 @@ package chatrmi.interfaces;
 
 import java.rmi.*;
 
+/**
+ * 
+ * @author caroline & yue
+ */
 public interface ServerInterface extends Remote {
 
     public void login(ClientInterface client, String nickname) throws RemoteException;
