@@ -15,6 +15,11 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * 
+ *
+ * @author yue
+ */
 public class Server extends UnicastRemoteObject implements ServerInterface {
 
     protected ArrayList<ClientInterface> clients = new ArrayList<>();

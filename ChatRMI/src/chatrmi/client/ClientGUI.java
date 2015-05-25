@@ -21,6 +21,10 @@ import java.util.logging.Logger;
 
 import javax.swing.*;
 
+/**
+ *
+ * @author caroline & yue
+ */
 public class ClientGUI extends JFrame {
 
     public static String USER_NAME;
@@ -64,10 +68,6 @@ public class ClientGUI extends JFrame {
         this.server = (ServerInterface) regi.lookup(MyConstants.RMI_ID);
         client = new RemoteClient();
         server.login(client, USER_NAME);
-    }
-
-    public void stop() {
-
     }
 
     private void initGUI() {

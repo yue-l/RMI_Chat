@@ -6,9 +6,15 @@ import java.rmi.Naming;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 
+/**
+ * The client remote object, to identify the client connection
+ *
+ * @author yue
+ */
 public class RemoteClient extends UnicastRemoteObject implements ClientInterface {
 
     public RemoteClient() throws RemoteException {
+
     }
 
     @Override

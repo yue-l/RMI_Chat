@@ -10,7 +10,7 @@ import javax.swing.JOptionPane;
 /**
  * DMS assignment 2 RMI Chat Application entry
  *
- * @author yue
+ * @author caroline yue
  */
 public class ChatRMI {
 
