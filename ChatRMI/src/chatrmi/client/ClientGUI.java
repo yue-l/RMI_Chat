@@ -6,6 +6,8 @@ import chatrmi.constants.MyConstants;
 import chatrmi.rmiserver.Server;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.net.Inet4Address;
 import java.net.MalformedURLException;
 import java.net.UnknownHostException;
@@ -22,20 +24,23 @@ import javax.swing.*;
 public class ClientGUI extends JFrame {
 
     public static String USER_NAME;
-    public static String SERVER_HOST;
+    public static String SERVER_HOST_IP;
     private static JTextArea LOG;
 
     private RemoteClient client;
     private ServerInterface server;
+    private boolean isHost;
     private JTextField Message;
     private JScrollPane jScrollPaneHistory;
 
     public ClientGUI() {
         super();
+
         initGUI();
     }
 
     public void host() throws UnknownHostException {
+        isHost = true;
         Server server = null;
         Registry regi = null;
         try {
@@ -50,9 +55,10 @@ public class ClientGUI extends JFrame {
 
     public void join(boolean isHost) throws MalformedURLException, RemoteException, NotBoundException {
         Registry regi = null;
-        if (!isHost) {
-            regi = LocateRegistry.getRegistry(SERVER_HOST, MyConstants.RMI_PORT);
-        } else {
+        if (!isHost) {//for client
+            regi = LocateRegistry.getRegistry(SERVER_HOST_IP, MyConstants.RMI_PORT);
+            System.out.println("Host is " + SERVER_HOST_IP);
+        } else {//for server
             regi = LocateRegistry.getRegistry("localhost", MyConstants.RMI_PORT);
         }
         this.server = (ServerInterface) regi.lookup(MyConstants.RMI_ID);
@@ -60,8 +66,26 @@ public class ClientGUI extends JFrame {
         server.login(client, USER_NAME);
     }
 
+    public void stop() {
+
+    }
+
     private void initGUI() {
         try {
+            this.addWindowListener(new WindowAdapter() {
+                public void windowClosing(WindowEvent e) {
+                    try {
+                        if (isHost) {
+                            server.quit();
+                        } else {
+                            client.close();
+                        }
+                        System.exit(0);
+                    } catch (RemoteException ex) {
+                        Logger.getLogger(ClientGUI.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+            });
             jScrollPaneHistory = new JScrollPane();
             getContentPane().add(jScrollPaneHistory);
             jScrollPaneHistory.setBounds(7, 7, 378, 203);

@@ -7,14 +7,10 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import javax.swing.JOptionPane;
 
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 /**
+ * DMS assignment 2 RMI Chat Application entry
  *
- * @author mk30
+ * @author yue
  */
 public class ChatRMI {
 
@@ -29,17 +25,17 @@ public class ChatRMI {
                     inst.host();
                     inst.join(true);
                 } else {
-                    ClientGUI.SERVER_HOST = JOptionPane.showInputDialog("Enter the host of the chatserver", "localhost");
+                    ClientGUI.SERVER_HOST_IP = JOptionPane.showInputDialog("Enter the host of the chatserver", "localhost");
                     System.out.println("No");
                     inst.join(false);
                 }
                 inst.setVisible(true);
             } catch (HeadlessException | UnknownHostException | MalformedURLException | RemoteException | NotBoundException e) {
-                System.exit(0);
+                System.exit(-1);
             }
         } else {
             System.out.println("no user name entered, bye!!!!");
-            System.exit(0);
+            System.exit(-1);
         }
     }
 }

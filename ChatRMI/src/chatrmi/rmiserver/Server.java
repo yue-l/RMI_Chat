@@ -6,6 +6,7 @@ import chatrmi.constants.MyConstants;
 import java.net.Inet4Address;
 import java.net.UnknownHostException;
 import java.rmi.AlreadyBoundException;
+import java.rmi.NoSuchObjectException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -42,6 +43,15 @@ public class Server extends UnicastRemoteObject implements ServerInterface {
 
     public void logout(ClientInterface client) {
         clients.remove(client);
+    }
+
+    @Override
+    public void quit() {
+        try {
+            UnicastRemoteObject.unexportObject(this, true);
+        } catch (NoSuchObjectException ex) {
+            Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     public static void main(String[] args) throws UnknownHostException {
