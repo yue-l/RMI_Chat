@@ -21,38 +21,14 @@ import javax.swing.*;
 
 public class ClientGUI extends JFrame {
 
+    public static String USER_NAME;
+    public static String SERVER_HOST;
+    private static JTextArea LOG;
+
     private RemoteClient client;
     private ServerInterface server;
-    private static String USER_NAME;
-    private static String SERVER_HOST;
-    private static JTextArea LOG;
     private JTextField Message;
     private JScrollPane jScrollPaneHistory;
-
-    public static void main(String[] args) {
-        USER_NAME = JOptionPane.showInputDialog("Enter your nickname");
-        if (USER_NAME != null && !USER_NAME.equals("")) {
-            try {
-                ClientGUI inst = new ClientGUI();
-                if (JOptionPane.showConfirmDialog(null, "Do you wish to host?",
-                        "host?", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
-                    System.out.println("Yes");
-                    inst.host();
-                    inst.join(true);
-                } else {
-                    SERVER_HOST = JOptionPane.showInputDialog("Enter the host of the chatserver", "localhost");
-                    System.out.println("No");
-                    inst.join(false);
-                }
-                inst.setVisible(true);
-            } catch (Exception e) {
-                e.printStackTrace();
-                System.exit(0);
-            }
-        } else {
-            System.exit(0);
-        }
-    }
 
     public ClientGUI() {
         super();
