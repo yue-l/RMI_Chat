@@ -3,13 +3,14 @@ package chatrmi.rmiserver;
 import chatrmi.interfaces.ClientInterface;
 import chatrmi.interfaces.ServerInterface;
 import chatrmi.constants.MyConstants;
+import java.net.Inet4Address;
+import java.net.UnknownHostException;
 import java.rmi.AlreadyBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -31,7 +32,7 @@ public class Server extends UnicastRemoteObject implements ServerInterface {
         for (int i = 0; i < clients.size(); i++) {
             ClientInterface clientInterf = clients.get(i);
             try {
-                clientInterf.getMessage(message, nickname);
+                clientInterf.getMessage(nickname, message);
             } catch (RemoteException e) {
                 logout(clientInterf);
                 i = i - 1;
@@ -43,24 +44,16 @@ public class Server extends UnicastRemoteObject implements ServerInterface {
         clients.remove(client);
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws UnknownHostException {
         Server server = null;
-        try {
-            server = new Server();
-        } catch (RemoteException ex) {
-            Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
-        }
         Registry regi = null;
         try {
+            server = new Server();
             regi = LocateRegistry.createRegistry(MyConstants.RMI_PORT);
-        } catch (RemoteException ex) {
-            Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        try {
             regi.bind(MyConstants.RMI_ID, server);
+            System.out.println("server is ready at: " + Inet4Address.getLocalHost().getHostAddress());
         } catch (RemoteException | AlreadyBoundException ex) {
             Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
         }
-        System.out.println("server is ready");
     }
 }

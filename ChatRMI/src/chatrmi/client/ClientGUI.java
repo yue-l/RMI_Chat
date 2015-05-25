@@ -3,9 +3,13 @@ package chatrmi.client;
 import chatrmi.rmiserver.RemoteClient;
 import chatrmi.interfaces.ServerInterface;
 import chatrmi.constants.MyConstants;
+import chatrmi.rmiserver.Server;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.net.Inet4Address;
 import java.net.MalformedURLException;
+import java.net.UnknownHostException;
+import java.rmi.AlreadyBoundException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
@@ -15,25 +19,31 @@ import java.util.logging.Logger;
 
 import javax.swing.*;
 
-public class GUI extends JFrame {
+public class ClientGUI extends JFrame {
 
     private RemoteClient client;
     private ServerInterface server;
     private static String USER_NAME;
     private static String SERVER_HOST;
-    private static JTextArea History;
+    private static JTextArea LOG;
     private JTextField Message;
     private JScrollPane jScrollPaneHistory;
 
     public static void main(String[] args) {
-//        Node node = new Node();
-//        node. = JOptionPane.showInputDialog("Enter the host of the chatserver", "localhost");
-//        USER_NAME = JOptionPane.showInputDialog("Enter your nickname");
-        SERVER_HOST = JOptionPane.showInputDialog("Enter the host of the chatserver", "localhost");
         USER_NAME = JOptionPane.showInputDialog("Enter your nickname");
-        if (SERVER_HOST != null && USER_NAME != null && !USER_NAME.equals("")) {
+        if (USER_NAME != null && !USER_NAME.equals("")) {
             try {
-                GUI inst = new GUI();
+                ClientGUI inst = new ClientGUI();
+                if (JOptionPane.showConfirmDialog(null, "Do you wish to host?",
+                        "host?", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+                    System.out.println("Yes");
+                    inst.host();
+                    inst.join(true);
+                } else {
+                    SERVER_HOST = JOptionPane.showInputDialog("Enter the host of the chatserver", "localhost");
+                    System.out.println("No");
+                    inst.join(false);
+                }
                 inst.setVisible(true);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -44,13 +54,34 @@ public class GUI extends JFrame {
         }
     }
 
-    public GUI() throws MalformedURLException, RemoteException, NotBoundException {
+    public ClientGUI() {
         super();
-        Registry regi = LocateRegistry.getRegistry("localhost", MyConstants.RMI_PORT);
+        initGUI();
+    }
+
+    public void host() throws UnknownHostException {
+        Server server = null;
+        Registry regi = null;
+        try {
+            server = new Server();
+            regi = LocateRegistry.createRegistry(MyConstants.RMI_PORT);
+            regi.bind(MyConstants.RMI_ID, server);
+            System.out.println("server is ready at: " + Inet4Address.getLocalHost().getHostAddress());
+        } catch (RemoteException | AlreadyBoundException ex) {
+            Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public void join(boolean isHost) throws MalformedURLException, RemoteException, NotBoundException {
+        Registry regi = null;
+        if (!isHost) {
+            regi = LocateRegistry.getRegistry(SERVER_HOST, MyConstants.RMI_PORT);
+        } else {
+            regi = LocateRegistry.getRegistry("localhost", MyConstants.RMI_PORT);
+        }
         this.server = (ServerInterface) regi.lookup(MyConstants.RMI_ID);
         client = new RemoteClient();
         server.login(client, USER_NAME);
-        initGUI();
     }
 
     private void initGUI() {
@@ -59,10 +90,10 @@ public class GUI extends JFrame {
             getContentPane().add(jScrollPaneHistory);
             jScrollPaneHistory.setBounds(7, 7, 378, 203);
             jScrollPaneHistory.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-            History = new JTextArea();
-            History.setLineWrap(true);
-            History.setEditable(false);
-            jScrollPaneHistory.setViewportView(History);
+            LOG = new JTextArea();
+            LOG.setLineWrap(true);
+            LOG.setEditable(false);
+            jScrollPaneHistory.setViewportView(LOG);
             Message = new JTextField();
             getContentPane().add(Message);
             Message.setBounds(7, 217, 378, 42);
@@ -84,9 +115,9 @@ public class GUI extends JFrame {
 
     public static void updateChatMessage(String name, String msg) {
         if (!name.equals("")) {
-            History.append(name + ": " + msg + "\n");
+            LOG.append(name + ": " + msg + "\n");
         } else {
-            History.append(msg + "\n");
+            LOG.append(msg + "\n");
         }
     }
 
@@ -95,7 +126,7 @@ public class GUI extends JFrame {
             try {
                 server.broadcastMessage(Message.getText(), USER_NAME);
             } catch (RemoteException ex) {
-                Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(ClientGUI.class.getName()).log(Level.SEVERE, null, ex);
             }
             Message.setText("");
         }
