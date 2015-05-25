@@ -2,9 +2,10 @@ package chatrmi.rmiserver;
 
 import chatrmi.client.ClientGUI;
 import chatrmi.interfaces.ClientInterface;
-import java.rmi.Naming;
+import chatrmi.interfaces.ServerInterface;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.ArrayList;
 
 /**
  * The client remote object, to identify the client connection
@@ -13,7 +14,7 @@ import java.rmi.server.UnicastRemoteObject;
  */
 public class RemoteClient extends UnicastRemoteObject implements ClientInterface {
 
-    public RemoteClient() throws RemoteException {
+    public RemoteClient(ServerInterface server) throws RemoteException {
 
     }
 

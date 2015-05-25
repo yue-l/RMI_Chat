@@ -66,13 +66,15 @@ public class ClientGUI extends JFrame {
             regi = LocateRegistry.getRegistry("localhost", MyConstants.RMI_PORT);
         }
         this.server = (ServerInterface) regi.lookup(MyConstants.RMI_ID);
-        client = new RemoteClient();
+        client = new RemoteClient(server);
         server.login(client, USER_NAME);
     }
 
     private void initGUI() {
         try {
             this.addWindowListener(new WindowAdapter() {
+
+                @Override
                 public void windowClosing(WindowEvent e) {
                     try {
                         if (isHost) {
